@@ -137,5 +137,5 @@ std::string Utf8String::substr(size_t start, size_t size) const {
  *
  */
 std::ostream& operator<< (std::ostream& stream, const Utf8String& utf8String) { 
-    stream << utf8String.to_string();
+    return stream << utf8String.to_string();
 }
