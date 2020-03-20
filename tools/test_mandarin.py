@@ -3,7 +3,7 @@
 
 import unittest
 
-from mandarin import parse_entry, join_pinyin, sorted_entries
+from mandarin import parse_entry, join_pinyin, remove_prefixes, sorted_entries
 
 
 class TestParseEntry(unittest.TestCase):
@@ -58,6 +58,39 @@ class TestJoinPinyin(unittest.TestCase):
             join_pinyin(
                 'you3 jie4 you3 huan2 , zai4 jie4 bu4 nan2'
             )
+        )
+
+
+class TestRemovePrefixes(unittest.TestCase):
+    base_entries = {
+        ('好', '好', 'hao3'),
+        ('美', '美', 'mei3'),
+        ('來', '来', 'lai2'),
+        ('新', '新', 'xin1'),
+    }
+
+    def test_prefixed(self):
+        prefixed = {
+            ('很好', '很好', 'hen3 hao3'),
+            ('更美', '更美', 'geng4 mei3'),
+            ('不來', '不来', 'bu4 lai2'),
+            ('最新', '最新', 'zui4 xin1'),
+            ('非常好', '非常好', 'fei1 chang2 hao3'),
+        }
+        self.assertEqual(
+            self.base_entries,
+            remove_prefixes(self.base_entries | prefixed)
+        )
+
+    def test_not_prefixed(self):
+        not_prefixed = {
+            ('更新', '更新', 'geng1 xin1'),  # pinyin differs
+            ('不來梅', '不来梅', 'bu4 lai2 mei2'),  # remainder is not a word
+            ('好不', '好不', 'hao3 bu4'),  # not prefix
+        }
+        self.assertEqual(
+            self.base_entries | not_prefixed,
+            remove_prefixes(self.base_entries | not_prefixed)
         )
 
 

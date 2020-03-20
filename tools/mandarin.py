@@ -65,6 +65,31 @@ def join_pinyin(pinyin):
     return pinyin.strip()  # removing extraneous spaces introduced above
 
 
+def remove_prefixes(entries):
+    """This function removes adverbial prefixes (like negation) from words
+    so the combination isn't treated as a single unit.
+
+    Relevant standard:
+    《汉语拼音正词法基本规则》(GB/T 16159-2012) 6.1.6：“副词与后面的词语，分写”
+    """
+    prefixes = [
+        ('不', '不', 'bu4 '),
+        ('很', '很', 'hen3 '),
+        ('更', '更', 'geng4 '),
+        ('最', '最', 'zui4 '),
+        ('非常', '非常', 'fei1 chang2 '),
+    ]
+    return {
+        entry
+        for entry in entries
+        if not any(
+            all(e.startswith(p) for e, p in zip(entry, prefix))  # has prefix
+            and tuple(e[len(p):] for e, p in zip(entry, prefix)) in entries  # remainder is also an entry
+            for prefix in prefixes
+        )
+    }
+
+
 def sorted_entries(entries, preference):
     """Apply an ordering where ambiguous entries are disambiguated according to
     the given preference ordering"""
@@ -112,6 +137,7 @@ def print_xml():
                 comments = None
             entries.add(parse_entry(line))
 
+    entries = remove_prefixes(entries)
     entries = sorted_entries(entries, mandarin_preference.preference)
     for i, (trad, simp, pinyin) in enumerate(entries):
         assert '"' not in trad+simp+pinyin
