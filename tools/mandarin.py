@@ -14,6 +14,7 @@ try:
 except ImportError:  # Python 2
     from urllib2 import urlopen
 
+import mandarin_override
 import mandarin_preference
 
 
@@ -144,10 +145,16 @@ def print_xml():
 
     entries = remove_prefixes(entries)
     entries = sorted_entries(entries, mandarin_preference.preference)
+    entries = [
+        (trad, simp, join_pinyin(pinyin))
+        for (trad, simp, pinyin)
+        in entries
+    ]
+    entries = mandarin_override.override + entries
     for i, (trad, simp, pinyin) in enumerate(entries):
         assert '"' not in trad+simp+pinyin
         print('<item id="{}" simp="{}" trad="{}" pinyin="{}" />'.format(
-            i+1, simp, trad, join_pinyin(pinyin)
+            i+1, simp, trad, pinyin
         ))
 
     print('</root>')
