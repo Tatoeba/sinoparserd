@@ -44,11 +44,11 @@ it provides the following API call, that will return a XML answer
 
 To regenerate `doc/mandarin.xml` with an updated version of CC-CEDICT, run
 ```bash
-tools/mandarin.py > doc/mandarin.xml
+python tools/mandarin > doc/mandarin.xml
 ```
 
 If any new ambiguous entries have been added to CC-CEDICT, this will fail. In
-that case, add the entries in question to `tools/mandarin_preference.py` to
+that case, add the entries in question to `tools/mandarin/preference.py` to
 specify which variant should be used.
 
 ## License

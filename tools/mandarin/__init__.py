@@ -14,8 +14,8 @@ try:
 except ImportError:  # Python 2
     from urllib2 import urlopen
 
-import mandarin_override
-import mandarin_preference
+from override import override
+from preference import preference
 
 
 def gunzip_urlopen(url):
@@ -144,13 +144,13 @@ def print_xml():
             entries.add(parse_entry(line))
 
     entries = remove_prefixes(entries)
-    entries = sorted_entries(entries, mandarin_preference.preference)
+    entries = sorted_entries(entries, preference)
     entries = [
         (trad, simp, join_pinyin(pinyin))
         for (trad, simp, pinyin)
         in entries
     ]
-    entries = mandarin_override.override + entries
+    entries = override + entries
     for i, (trad, simp, pinyin) in enumerate(entries):
         assert '"' not in trad+simp+pinyin
         print('<item id="{}" simp="{}" trad="{}" pinyin="{}" />'.format(

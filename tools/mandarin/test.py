@@ -3,7 +3,7 @@
 
 import unittest
 
-from mandarin import parse_entry, join_pinyin, remove_prefixes, sorted_entries
+from __init__ import parse_entry, join_pinyin, remove_prefixes, sorted_entries
 
 
 class TestParseEntry(unittest.TestCase):
