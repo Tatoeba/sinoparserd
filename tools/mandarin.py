@@ -42,15 +42,6 @@ def parse_entry(line):
     return (trad, simp, pinyin)
 
 
-def add_spaces_to_syllable(syllable):
-    """Add space in front of capital letters and after commas."""
-    if syllable[0].isupper():
-        syllable = ' ' + syllable
-    if syllable[-1] == ',':
-        syllable += ' '
-    return syllable
-
-
 def join_pinyin(pinyin):
     """Joins pinyin syllables into words.
 
@@ -61,8 +52,22 @@ def join_pinyin(pinyin):
     like 黃鼠狼給雞拜年，沒安好心 but it's hard to handle those automatically.
     """
     syllables = pinyin.split(' ')
-    pinyin = ''.join(map(add_spaces_to_syllable, syllables))
-    return pinyin.strip()  # removing extraneous spaces introduced above
+    pinyin = ''
+    previous_syllable = None
+    for current_syllable in syllables:
+        if previous_syllable is None:
+            separator = ''
+        elif previous_syllable[-1] == ',':
+            separator = ' '
+        elif current_syllable[0].isupper():
+            separator = ' '
+        elif current_syllable[0] in 'aeo':
+            separator = "'"
+        else:
+            separator = ''
+        pinyin += separator + current_syllable
+        previous_syllable = current_syllable
+    return pinyin
 
 
 def remove_prefixes(entries):

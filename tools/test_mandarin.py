@@ -60,6 +60,14 @@ class TestJoinPinyin(unittest.TestCase):
             )
         )
 
+    def test_apostrophe(self):
+        self.assertEqual(
+            "da2'an4",
+            join_pinyin(
+                'da2 an4'
+            )
+        )
+
 
 class TestRemovePrefixes(unittest.TestCase):
     base_entries = {
