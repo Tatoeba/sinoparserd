@@ -51,6 +51,40 @@ If any new ambiguous entries have been added to CC-CEDICT, this will fail. In
 that case, add the entries in question to `tools/mandarin/preference.py` to
 specify which variant should be used.
 
+### Evaluating Transcriptions ###
+
+To evaluate changes to the transcription engine, `tools/batch_transcribe.py` and
+`tools/diff` can be used as follows:
+
+1. Get the list of Mandarin sentences from Tatoeba:
+```bash
+wget 'https://downloads.tatoeba.org/exports/per_language/cmn/cmn_sentences.tsv.bz2'
+bunzip2 cmn_sentences.tsv.bz2
+```
+2. Run `sinoparserd` with the old configuration
+```bash
+sinoparserd -m old_mandarin.xml
+```
+3. Transcribe all sentences
+```bash
+cat cmn_sentences.tsv | tools/batch_transcribe.py > old_cmn_transcriptions.tsv
+```
+4. Run `sinoparserd` with the new configuration and repeat.
+5. Generate a report of the differences
+```bash
+python tools/diff/ {old,new}_cmn_transcriptions.tsv > report.html
+```
+6. View the generated HTML in a browser.
+7. To compare against manually edited transcriptions, download them from Tatoeba
+```bash
+wget 'https://downloads.tatoeba.org/exports/transcriptions.tar.bz2'
+tar xf transcriptions.tar.bz2
+```
+8. And include them in the comparison
+```bash
+python tools/diff/ {old,new}_cmn_transcriptions.tsv transcriptions.csv > report.html
+```
+
 ## License
 
 All the source code is licensed under GPLv3, the xml files are under their own license.
