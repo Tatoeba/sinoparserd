@@ -8,6 +8,7 @@ exported transcription files, in order to make it easy to compare them.
 
 from __future__ import print_function
 
+import re
 import xml.etree.ElementTree as ET
 
 try:
@@ -19,6 +20,14 @@ except ImportError:  # Python 2
 def utf8(text):
     if type(text) != str:
         return text.encode('utf-8')
+    return text
+
+
+def basic_pinyin_cleanup(text):
+    # See tatoeba2/src/Lib/Autotranscription.php: _basic_pinyin_cleanup
+    text = re.sub(r'\s+([!?:;.,])', r'\1', text)
+    text = re.sub(r'"\s*([^"]+)\s*"', r'"\1"', text)
+    text = text[0].upper() + text[1:]
     return text
 
 
@@ -35,7 +44,7 @@ def transcribe(text):
     romanization = data['romanization']
     transcriptions = {
         alternate_script: alternate_script_text,
-        'Latn': romanization.capitalize(),
+        'Latn': basic_pinyin_cleanup(romanization),
     }
     return transcriptions
 
